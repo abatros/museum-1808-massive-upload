@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const pdf = require('./every-pdf.js');
+// const pdf = require('./every-pdf.js');
 
 const argv = require('yargs')
   .alias('f','file')
