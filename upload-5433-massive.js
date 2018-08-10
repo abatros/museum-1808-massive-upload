@@ -10,7 +10,6 @@ const argv = require('yargs')
   .alias('a','all')
   .argv;
 
-
 if (!argv.file && !argv.dir) {
   console.log('Need folder or pdf/file\nexit.');
   return;
