@@ -1,0 +1,13 @@
+/[0-9]\{5,\}/d
+/[aeiu]\{3,\}/d
+/[o]\{4,\}/d
+/[hjkqvwxyz]\{2,\}/d
+/[HJKQVWXYZ]\{2,\}/d
+/[bcdfghjklmnpqrstvwxyz]\{3,\}/d
+/[BCDFGHJKLMNPQRSTVWXYZ]\{3,\}/d
+/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ0-9]\{3,\}/d
+/[a-z][A-Z]/d
+/[0-9][A-Za-z]/d
+/[AEIOU]\{3,\}/d
+/[a-z]\{2,\}[A-Z]/d
+/[A-Z]\{2,\}[a-ziïî]/d
