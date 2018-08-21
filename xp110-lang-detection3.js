@@ -16,6 +16,9 @@ const jsonfile = require('jsonfile');
 const ls = require('./lib/ls-recurse.js');
 const nspell = require('./lib/nspell.js')
 const assert = require('assert');
+var LanguageDetect = require('languagedetect');
+var lngDetector = new LanguageDetect();
+
 // ---------------------------------------------------------------------------
 var spell_fr, spell_en, spell_de, spell_es;
 
@@ -37,6 +40,44 @@ const argv = require('yargs')
       return Math.floor(Math.random() * Math.floor(max));
     }
 
+
+function main2() {
+  const files = ls('/media/dkz/Seagate/museum-data','.json')
+  // establish min ratio(un) for FRENCH
+  let min_un=999999, max_un=0;
+
+  for (let i=0; i< files.length; i++) {
+    const pdf1 = jsonfile.readFileSync(files[i]);
+
+    const vl = lngDetector.detect(pdf1._text,2)[0] || [['undefined',0]]
+
+    // check this document using ratio 'un' / nbre token => FRENCH
+    pdf1._tokens = pdf1._tokens || []
+    const n1 = pdf1._tokens
+        .reduce((a,v)=>{
+//          return (a + (v == 'un')?1:0);
+          if (v == 'un') return a+1;
+          return a;
+        },0)
+//    console.log('n1:',n1)
+    if (vl[0] == 'french')
+      {
+      min_un = Math.min(n1,min_un)
+      max_un = Math.min(n1,max_un)
+      }
+
+    // report:
+    if (i%1000 == 0)
+    console.log(`(${vl[0] || 'xxxx'})(${Math.floor(1000*n1/pdf1._tokens.length)}) ${files[i]}`)
+  } // each file.
+
+  // report min/max for 'un'
+  console.log(`min:${min_un} max:${max_un}`)
+
+}
+
+
+// --------------------------------------------------------------------------
 
 function main(spell) {
   const files = ls('/media/dkz/Seagate/museum-data','.json')
@@ -78,6 +119,9 @@ function main(spell) {
 
 // --------------------------------------------------------------------------
 
+main2();
+
+return;
 Promise.all([p1,p2,p3,p4])
 .then((v)=>{
   main(v)
