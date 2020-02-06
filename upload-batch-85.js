@@ -10,7 +10,7 @@ const monitor = require('pg-monitor');
 //const json = JSON.parse(fs.readFileSync('../postgres/pdf-store.json'))
 
 const conn = {
-  host: 'inhelium.com',
+  host: 'ultimheat.com',
   port: 5433,
   database: 'museum-v2',
   user: 'postgres'
@@ -36,6 +36,8 @@ const argv = require('yargs')
 argv.dir = argv.dir || process.env.pdfdir;
 
 if (!argv.file && !argv.dir) {
+  console.log(`./upload-batch-85.js --file <pdf-file>`)
+  console.log(`./upload-batch-85.js --dir <folder-containing-pdf-files>`)
   console.log('Need folder or pdf/file\nexit.');
   return;
 }
@@ -84,8 +86,6 @@ if (pdf_files.length > 0) {
 }
 
 
-console.log(`files:${pdf_files.length}`);
-
 // ---------------------------------------------------------------------------
 
 function xtract_kwords(s) {
@@ -105,9 +105,13 @@ async function main(){
   const pages = [];
   if (argv.verbose)
   console.log('loading Massive...');
-  const db = await Massive(conn);
+  const db = await Massive(conn)
+  .catch(err=>{
+    console.log(`@110 loading Massive: `,err)
+    process.exit()
+  });
   if (argv.verbose)
-  console.log('Massive is ready.');
+  console.log(`Massive : db "${conn.host}::${conn.database}" is open.`);
 
   for (let j=0; j<pdf_files.length; j++) {
 //    const fp = path.join(argv.dir, pdf_files[j]);
@@ -151,14 +155,20 @@ async function main(){
 }
 
 
-main()
-.then((pages)=>{
-  console.log('done npages:',pages.length);
-  pages.forEach((it,j)=>{
-    console.log(`${j} =>${it.url}::${it.pageNo} [${it.kwords}]`)
-    // do more cleaning and formatting
+try {
+  main()
+  .then((pages)=>{
+    console.log('done npages:',pages.length);
+    pages.forEach((it,j)=>{
+      console.log(`${j} =>${it.url}::${it.pageNo} [${it.kwords}]`)
+      // do more cleaning and formatting
+    })
   })
-})
-.catch (e => {
-  console.log(e)
-})
+  .catch (e => {
+    console.log(e)
+  })
+}
+catch(err) {
+  console.log('@168 FATAL : ',err)
+  process.exit();
+}

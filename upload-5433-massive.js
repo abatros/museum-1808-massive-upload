@@ -11,6 +11,8 @@ const argv = require('yargs')
   .argv;
 
 if (!argv.file && !argv.dir) {
+  console.log(`./upload-5433-massive.js --file <pdf-file>`)
+  console.log(`./upload-5433-massive.js --dir <folder-containing-pdf-files>`)
   console.log('Need folder or pdf/file\nexit.');
   return;
 }
